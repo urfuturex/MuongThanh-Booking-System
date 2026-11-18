@@ -7,32 +7,26 @@ const API_HOTELS  = '../api/hotels.php';
 
 let currentPage    = 1;
 let totalPages     = 1;
-let allReviews     = [];   // full list for stats (fetched once without pagination)
+let allReviews     = [];
 let replyingId     = null;
 let deletingId     = null;
+let currentUser    = null;
 
-// ===== INIT =====
+// ===== PHASE 1: bind UI event listeners =====
 document.addEventListener('DOMContentLoaded', () => {
-  loadHotels();
-  loadReviews();
-
-  // Filters
   document.getElementById('fHotel').addEventListener('change',  () => { currentPage = 1; loadReviews(); });
   document.getElementById('fStatus').addEventListener('change', () => { currentPage = 1; loadReviews(); });
   document.getElementById('fRating').addEventListener('change', () => { currentPage = 1; loadReviews(); });
   document.getElementById('btnReset').addEventListener('click',  resetFilters);
 
-  // Reply modal
   document.getElementById('replyModalClose').addEventListener('click', closeReplyModal);
   document.getElementById('replyCancel').addEventListener('click',     closeReplyModal);
   document.getElementById('replySave').addEventListener('click',       saveReply);
 
-  // Delete modal
   document.getElementById('deleteModalClose').addEventListener('click', closeDeleteModal);
   document.getElementById('deleteCancelBtn').addEventListener('click',  closeDeleteModal);
   document.getElementById('deleteConfirmBtn').addEventListener('click', confirmDelete);
 
-  // Close modals on overlay click
   document.getElementById('replyModal').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeReplyModal();
   });
@@ -41,16 +35,43 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// ===== PHASE 2: init data sau khi auth xong =====
+document.addEventListener('adminReady', ({ detail: { staff } }) => {
+  currentUser = staff;
+  loadHotels(staff);
+  loadReviews();
+});
+
 // ===== LOAD HOTELS (for filter dropdown) =====
-async function loadHotels() {
+async function loadHotels(user) {
+  const isManager = user.role === 'manager';
+  const sel = document.getElementById('fHotel');
+
+  if (!isManager) {
+    // Non-manager: chỉ hiện chi nhánh của mình, lock dropdown
+    try {
+      const res  = await fetch(`${API_HOTELS}?id=${user.hotel_id}`);
+      const data = await res.json();
+      const hotel = (data.hotels || [])[0] || data.hotel;
+      if (hotel) {
+        const opt = document.createElement('option');
+        opt.value = hotel.id;
+        opt.textContent = hotel.name;
+        sel.appendChild(opt);
+        sel.value    = hotel.id;
+        sel.disabled = true;
+      }
+    } catch (_) { /* fail silently */ }
+    return;
+  }
+
+  // Manager: load tất cả
   try {
     const res  = await fetch(API_HOTELS + '?all=1');
     const data = await res.json();
-    const hotels = data.hotels || [];
-    const sel    = document.getElementById('fHotel');
-    hotels.forEach(h => {
-      const opt  = document.createElement('option');
-      opt.value  = h.id;
+    (data.hotels || []).forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h.id;
       opt.textContent = h.name;
       sel.appendChild(opt);
     });
@@ -169,8 +190,8 @@ function renderTable(list) {
         <div class="action-btns">
           ${canApprove ? `<button class="btn-approve" onclick="approveReview(${r.id})">${tAdm('rv.approve')}</button>` : ''}
           ${canReject  ? `<button class="btn-reject"  onclick="rejectReview(${r.id})">${tAdm('rv.reject')}</button>` : ''}
-          <button class="btn-reply"      onclick="openReplyModal(${r.id})">${tAdm('rv.reply')}</button>
-          <button class="btn-del-review" onclick="askDeleteReview(${r.id})">${tAdm('rv.delete')}</button>
+          <button class="btn-reply" onclick="openReplyModal(${r.id})">${tAdm('rv.reply')}</button>
+          ${currentUser?.role === 'manager' ? `<button class="btn-del-review" onclick="askDeleteReview(${r.id})">${tAdm('rv.delete')}</button>` : ''}
         </div>
       </td>
     </tr>`;

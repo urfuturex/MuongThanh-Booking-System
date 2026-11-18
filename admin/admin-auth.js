@@ -6,12 +6,14 @@ const PAGE_MAP = {
   'index.html'     : 'index',
   'customers.html' : 'customers',
   'hotels.html'    : 'hotels',
+  'rooms.html'     : 'rooms',
   'staff.html'     : 'staff',
   'reviews.html'   : 'reviews',
   'promotions.html': 'promotions',
   'payments.html'  : 'payments',
   'emails.html'    : 'emails',
   'settings.html'  : 'settings',
+  'chat.html'      : 'chat',
 };
 
 const PAGE_LINKS = {
@@ -19,12 +21,14 @@ const PAGE_LINKS = {
   'index'     : 'index.html',
   'customers' : 'customers.html',
   'hotels'    : 'hotels.html',
+  'rooms'     : 'rooms.html',
   'staff'     : 'staff.html',
   'reviews'   : 'reviews.html',
   'promotions': 'promotions.html',
   'payments'  : 'payments.html',
   'emails'    : 'emails.html',
   'settings'  : 'settings.html',
+  'chat'      : 'chat.html',
 };
 
 (async function initAdminAuth() {
@@ -94,13 +98,15 @@ const PAGE_LINKS = {
   // Dịch nav links
   const navLabelsVi = {
     'dashboard.html':'Dashboard','index.html':'Đặt Phòng','customers.html':'Khách Hàng',
-    'hotels.html':'Khách Sạn','staff.html':'Nhân Viên','reviews.html':'Đánh Giá',
-    'promotions.html':'Khuyến Mãi','payments.html':'Thanh Toán','emails.html':'Email','settings.html':'Cài Đặt',
+    'hotels.html':'Khách Sạn','rooms.html':'Phòng','staff.html':'Nhân Viên','reviews.html':'Đánh Giá',
+    'promotions.html':'Khuyến Mãi','payments.html':'Thanh Toán','emails.html':'Email',
+    'settings.html':'Cài Đặt','chat.html':'Live Chat',
   };
   const navLabelsEn = {
     'dashboard.html':'Dashboard','index.html':'Bookings','customers.html':'Customers',
-    'hotels.html':'Hotels','staff.html':'Staff','reviews.html':'Reviews',
-    'promotions.html':'Promotions','payments.html':'Payments','emails.html':'Emails','settings.html':'Settings',
+    'hotels.html':'Hotels','rooms.html':'Rooms','staff.html':'Staff','reviews.html':'Reviews',
+    'promotions.html':'Promotions','payments.html':'Payments','emails.html':'Emails',
+    'settings.html':'Settings','chat.html':'Live Chat',
   };
   const navLabels = (localStorage.getItem('lang') === 'en') ? navLabelsEn : navLabelsVi;
   document.querySelectorAll('.adm-nav-link').forEach(link => {
@@ -122,6 +128,7 @@ const PAGE_LINKS = {
   });
 
   window.adminUser = staff;
+  document.dispatchEvent(new CustomEvent('adminReady', { detail: { staff, pages } }));
 })();
 
 async function adminLogout() {

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Chat — Mường Thanh Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="admin.css"/>
+  <script src="admin-i18n.js"></script>
+  <style>
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100vh - 61px);
+      overflow: hidden;
+    }
+
+    /* ── LEFT PANEL ── */
+    .chat-sidebar {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: var(--dark);
+      overflow: hidden;
+    }
+    .chat-sidebar-head {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .chat-sidebar-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--white);
+    }
+    .chat-badge-wrap { display: flex; gap: 0.6rem; align-items: center; }
+    .chat-badge {
+      font-size: 0.6rem; font-weight: 700;
+      padding: 0.15rem 0.55rem; border-radius: 20px;
+      background: rgba(224,85,85,0.2); color: #e05555;
+      border: 1px solid rgba(224,85,85,0.3);
+      display: none;
+    }
+    .chat-badge.show { display: inline-block; }
+
+    /* Tabs */
+    .chat-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .chat-tab {
+      flex: 1; padding: 0.65rem 0.5rem;
+      font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); background: transparent; border: none;
+      cursor: pointer; border-bottom: 2px solid transparent;
+      transition: all 0.2s; position: relative;
+    }
+    .chat-tab:hover { color: var(--white); }
+    .chat-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .tab-count {
+      display: inline-block; min-width: 16px; height: 16px;
+      background: rgba(201,169,110,0.15); border-radius: 8px;
+      font-size: 0.58rem; padding: 0 4px;
+      text-align: center; line-height: 16px;
+      margin-left: 0.3rem; color: var(--gold);
+    }
+
+    /* Chat list */
+    .chat-list { flex: 1; overflow-y: auto; }
+    .chat-list-item {
+      padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background 0.15s;
+      position: relative;
+    }
+    .chat-list-item:hover { background: rgba(255,255,255,0.03); }
+    .chat-list-item.active { background: rgba(201,169,110,0.07); border-left: 2px solid var(--gold); }
+    .cli-name { font-size: 0.82rem; font-weight: 500; color: var(--white); }
+    .cli-last { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cli-time { font-size: 0.62rem; color: rgba(245,240,234,0.3); position: absolute; top: 0.9rem; right: 1rem; }
+    .cli-unread {
+      display: inline-block; min-width: 18px; height: 18px;
+      background: #e05555; border-radius: 9px; color: #fff;
+      font-size: 0.6rem; font-weight: 700; text-align: center;
+      line-height: 18px; padding: 0 4px; margin-left: 0.4rem;
+    }
+    .cli-status-dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      margin-right: 0.4rem; vertical-align: middle;
+    }
+    .dot-waiting { background: #f0c040; }
+    .dot-active  { background: #6fcf97; }
+    .dot-closed  { background: rgba(245,240,234,0.2); }
+    .chat-list-empty { padding: 2rem; text-align: center; color: var(--muted); font-size: 0.82rem; }
+
+    /* ── RIGHT PANEL ── */
+    .chat-main {
+      display: flex;
+      flex-direction: column;
+      background: var(--black);
+      overflow: hidden;
+    }
+    .chat-main-empty {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: var(--muted); gap: 1rem;
+    }
+    .chat-main-empty-icon { font-size: 3rem; opacity: 0.3; }
+    .chat-main-empty p { font-size: 0.82rem; }
+
+    /* Active chat header */
+    .chat-window-head {
+      padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--dark); flex-shrink: 0;
+    }
+    .cwh-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(201,169,110,0.15); border: 1px solid rgba(201,169,110,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .cwh-info { flex: 1; }
+    .cwh-name { font-size: 0.88rem; font-weight: 500; color: var(--white); }
+    .cwh-meta { font-size: 0.68rem; color: var(--muted); margin-top: 0.15rem; }
+    .cwh-actions { display: flex; gap: 0.5rem; }
+    .btn-accept {
+      background: rgba(76,175,125,0.15); border: 1px solid rgba(76,175,125,0.4);
+      color: #4caf7d; font-size: 0.72rem; letter-spacing: 0.08em;
+      padding: 0.4rem 1rem; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-accept:hover { background: rgba(76,175,125,0.25); }
+    .btn-close-chat {
+      background: rgba(224,85,85,0.1); border: 1px solid rgba(224,85,85,0.3);
+      color: #e05555; font-size: 0.72rem; letter-spacing: 0.08em;
+      padding: 0.4rem 1rem; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-close-chat:hover { background: rgba(224,85,85,0.2); }
+
+    /* Messages */
+    .chat-window-msgs {
+      flex: 1; overflow-y: auto; padding: 1.5rem;
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .wm-bubble {
+      max-width: 72%; padding: 0.65rem 1rem;
+      border-radius: 12px; font-size: 0.82rem; line-height: 1.5;
+      animation: msgIn 0.2s ease;
+    }
+    @keyframes msgIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; } }
+    .wm-bubble.customer {
+      background: rgba(255,255,255,0.06); color: #e8e3db;
+      border: 1px solid rgba(255,255,255,0.08); align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .wm-bubble.staff {
+      background: rgba(201,169,110,0.12); color: #f5f0ea;
+      border: 1px solid rgba(201,169,110,0.2); align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .wm-time { font-size: 0.6rem; color: rgba(245,240,234,0.3); margin-top: 0.25rem; }
+    .wm-status-notice {
+      text-align: center; font-size: 0.68rem;
+      color: rgba(245,240,234,0.35); font-style: italic;
+      align-self: center; padding: 0.25rem 0;
+    }
+
+    /* Reply box */
+    .chat-reply-box {
+      padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+      display: flex; gap: 0.75rem; align-items: flex-end;
+      background: var(--dark); flex-shrink: 0;
+    }
+    .chat-reply-input {
+      flex: 1; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(201,169,110,0.2); border-radius: 8px;
+      padding: 0.6rem 0.9rem; color: var(--white); font-size: 0.82rem;
+      font-family: inherit; outline: none; resize: none;
+      transition: border-color 0.2s; max-height: 100px;
+    }
+    .chat-reply-input:focus { border-color: rgba(201,169,110,0.5); }
+    .chat-reply-input::placeholder { color: rgba(245,240,234,0.25); }
+    .chat-reply-input:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-reply-send {
+      background: var(--gold); color: var(--black);
+      border: none; padding: 0.6rem 1.4rem; font-size: 0.78rem;
+      font-weight: 600; letter-spacing: 0.06em; cursor: pointer;
+      border-radius: 6px; transition: background 0.2s; flex-shrink: 0;
+    }
+    .btn-reply-send:hover { background: #e8c98a; }
+    .btn-reply-send:disabled { opacity: 0.4; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="adm-header">
+    <a href="../index.html" class="adm-logo">Mường Thanh</a>
+    <nav class="adm-nav">
+      <a href="dashboard.html" class="adm-nav-link">Dashboard</a>
+      <a href="index.html" class="adm-nav-link">Đặt Phòng</a>
+      <a href="customers.html" class="adm-nav-link">Khách Hàng</a>
+      <a href="hotels.html" class="adm-nav-link">Khách Sạn</a>
+      <a href="rooms.html"  class="adm-nav-link">Phòng</a>
+      <a href="staff.html" class="adm-nav-link">Nhân Viên</a>
+      <a href="reviews.html" class="adm-nav-link">Đánh Giá</a>
+      <a href="promotions.html" class="adm-nav-link">Khuyến Mãi</a>
+      <a href="payments.html"  class="adm-nav-link">Thanh Toán</a>
+      <a href="emails.html"    class="adm-nav-link">Email</a>
+      <a href="settings.html"  class="adm-nav-link">Cài Đặt</a>
+      <a href="chat.html" class="adm-nav-link active">Live Chat</a>
+    </nav>
+  </header>
+
+  <div class="chat-layout">
+
+    <!-- LEFT: CHAT LIST -->
+    <aside class="chat-sidebar">
+      <div class="chat-sidebar-head">
+        <span class="chat-sidebar-title" data-adm-i18n="chat.title">Live Chat</span>
+        <div class="chat-badge-wrap">
+          <span class="chat-badge" id="badgeWaiting">0 <span data-adm-i18n="chat.badge_waiting">chờ</span></span>
+          <span class="chat-badge" id="badgeUnread" style="background:rgba(76,175,125,0.2);color:#4caf7d;border-color:rgba(76,175,125,0.3)">0 <span data-adm-i18n="chat.badge_new">mới</span></span>
+        </div>
+      </div>
+
+      <div class="chat-tabs">
+        <button class="chat-tab active" data-tab="waiting" onclick="switchTab('waiting')">
+          <span data-adm-i18n="chat.tab_waiting">Chờ</span> <span class="tab-count" id="countWaiting">0</span>
+        </button>
+        <button class="chat-tab" data-tab="active" onclick="switchTab('active')">
+          <span data-adm-i18n="chat.tab_active">Đang chat</span> <span class="tab-count" id="countActive">0</span>
+        </button>
+        <button class="chat-tab" data-tab="closed" onclick="switchTab('closed')">
+          <span data-adm-i18n="chat.tab_closed">Đã đóng</span> <span class="tab-count" id="countClosed">0</span>
+        </button>
+      </div>
+
+      <div class="chat-list" id="chatList">
+        <div class="chat-list-empty" data-adm-i18n="chat.loading">Đang tải...</div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: CHAT WINDOW -->
+    <main class="chat-main" id="chatMain">
+      <div class="chat-main-empty" id="chatEmpty">
+        <div class="chat-main-empty-icon">💬</div>
+        <p data-adm-i18n="chat.empty">Chọn một cuộc trò chuyện để bắt đầu</p>
+      </div>
+
+      <!-- Active window (hidden until chat selected) -->
+      <div id="chatWindow" style="display:none; flex:1; display:none; flex-direction:column; overflow:hidden;">
+        <div class="chat-window-head" id="chatWindowHead">
+          <div class="cwh-avatar">👤</div>
+          <div class="cwh-info">
+            <div class="cwh-name" id="wCustName">—</div>
+            <div class="cwh-meta" id="wCustMeta">—</div>
+          </div>
+          <div class="cwh-actions" id="wActions"></div>
+        </div>
+        <div class="chat-window-msgs" id="chatWindowMsgs"></div>
+        <div class="chat-reply-box">
+          <textarea class="chat-reply-input" id="replyInput" rows="2"
+            data-adm-i18n-ph="chat.reply_ph"
+            placeholder="Nhập phản hồi..." disabled></textarea>
+          <button class="btn-reply-send" id="replySendBtn" onclick="sendReply()" disabled
+            data-adm-i18n="chat.btn_send">Gửi</button>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <script src="admin-auth.js"></script>
+  <script src="chat.js?v=1778876886"></script>
+</body>
+</html>

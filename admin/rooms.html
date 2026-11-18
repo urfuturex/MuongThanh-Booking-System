@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Quản Lý Phòng — Mường Thanh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="admin.css"/>
+  <script src="admin-i18n.js"></script>
+  <style>
+    /* ── ROOM GRID ── */
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+      gap: .75rem;
+      padding: 1.25rem 2rem 2rem;
+    }
+
+    /* ── ROOM CARD ── */
+    .room-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .85rem;
+      display: flex; flex-direction: column; gap: .4rem;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    .room-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.4); }
+
+    .room-card.available   { border-color: rgba(76,175,125,.4); }
+    .room-card.occupied    { border-color: rgba(224,85,85,.4); }
+    .room-card.maintenance { border-color: rgba(240,146,74,.4); }
+    .room-card.blocked     { border-color: var(--border); }
+
+    .rc-number { font-size: 1.2rem; font-weight: 700; color: var(--white); line-height: 1; display: flex; justify-content: space-between; align-items: flex-start; }
+    .rc-floor  { font-size: .62rem; font-weight: 600; background: rgba(255,255,255,.06); color: var(--muted); padding: 2px 6px; border-radius: 10px; }
+    .rc-type   { font-size: .72rem; color: var(--muted); line-height: 1.3; }
+
+    .rc-status { display: inline-flex; align-items: center; gap: .35rem; font-size: .7rem; font-weight: 600; padding: .22rem .55rem; border-radius: 10px; width: fit-content; margin-top: .1rem; }
+    .rc-status.available   { background: rgba(76,175,125,.15); color: var(--green); }
+    .rc-status.occupied    { background: rgba(224,85,85,.15);  color: var(--red); }
+    .rc-status.maintenance { background: rgba(240,146,74,.15); color: var(--orange); }
+    .rc-status.blocked     { background: rgba(255,255,255,.05); color: var(--muted); }
+
+    .rc-guest { font-size: .75rem; color: var(--white); font-weight: 500; margin-top: .2rem; }
+    .rc-ref   { font-size: .68rem; color: var(--muted); font-family: monospace; }
+    .rc-dates { font-size: .68rem; color: var(--muted); }
+
+    .rc-actions { display: flex; gap: .3rem; margin-top: .4rem; }
+    .rc-btn {
+      flex: 1; font-size: .65rem; font-weight: 600; padding: .28rem .35rem;
+      border: 1px solid var(--border); border-radius: 4px; cursor: pointer;
+      background: rgba(255,255,255,.04); color: var(--muted);
+      transition: all .15s; text-align: center;
+    }
+    .rc-btn:hover  { background: rgba(255,255,255,.1); color: var(--white); }
+    .rc-btn.danger { color: var(--red); }
+    .rc-btn.danger:hover { background: rgba(224,85,85,.15); border-color: rgba(224,85,85,.4); }
+
+    /* ── STAT CARD COLOR OVERRIDES ── */
+    .stat-card.red  { border-top: 2px solid var(--red); }
+    .stat-card.red  .stat-val { color: var(--red); }
+    .stat-card.amber { border-top: 2px solid var(--orange); }
+    .stat-card.amber .stat-val { color: var(--orange); }
+    .stat-card.gray  .stat-val { color: var(--muted); }
+
+    /* ── TOOLBAR ── */
+    .rm-toolbar { padding: .5rem 2rem; font-size: .75rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+
+    /* ── EMPTY ── */
+    .rooms-empty { text-align: center; color: var(--muted); padding: 3rem; font-size: .9rem; grid-column: 1/-1; }
+
+    /* ── MODAL ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65); display: flex; align-items: center; justify-content: center; z-index: 200; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: var(--dark); border: 1px solid var(--border); border-radius: 8px; width: 100%; max-width: 480px; box-shadow: 0 24px 60px rgba(0,0,0,.5); overflow: hidden; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+    .modal-header h2 { font-size: .95rem; font-weight: 600; color: var(--white); letter-spacing: .04em; }
+    .modal-close { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--muted); }
+    .modal-close:hover { color: var(--white); }
+    .modal-form { padding: 1.25rem; display: flex; flex-direction: column; gap: .85rem; }
+    .mfield label { display: block; font-size: .62rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--gold); margin-bottom: .3rem; }
+    .mfield input, .mfield select, .mfield textarea {
+      width: 100%; padding: .45rem .65rem;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--white); border-radius: 4px; font-size: .83rem; font-family: inherit;
+      outline: none;
+    }
+    .mfield input:focus, .mfield select:focus, .mfield textarea:focus { border-color: var(--gold); }
+    .mfield select option { background: var(--dark); }
+    .mfield textarea { resize: vertical; min-height: 60px; }
+    .mform-row { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+    .modal-actions { display: flex; gap: .5rem; justify-content: flex-end; padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
+    .btn-cancel {
+      padding: .42rem 1rem; border: 1px solid var(--border); border-radius: 4px;
+      background: transparent; cursor: pointer; font-size: .8rem;
+      color: var(--muted); transition: all .2s;
+    }
+    .btn-cancel:hover { border-color: var(--white); color: var(--white); }
+    .btn-save {
+      padding: .42rem 1.1rem; border: none; border-radius: 4px;
+      background: var(--gold); color: var(--black); font-weight: 600; cursor: pointer; font-size: .8rem;
+    }
+    .btn-save:hover { background: var(--gold-l); }
+
+    /* ── STATUS MODAL ── */
+    .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; padding: 1.25rem; }
+    .status-opt {
+      padding: .75rem 1rem; border: 1px solid var(--border); border-radius: 6px;
+      cursor: pointer; text-align: center; font-size: .82rem; font-weight: 600;
+      color: var(--muted); background: rgba(255,255,255,.03);
+      transition: all .15s;
+    }
+    .status-opt:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+    .status-opt.available   { border-color: rgba(76,175,125,.4);  color: var(--green); }
+    .status-opt.occupied    { border-color: rgba(224,85,85,.4);   color: var(--red); }
+    .status-opt.maintenance { border-color: rgba(240,146,74,.4);  color: var(--orange); }
+    .status-opt.blocked     { border-color: var(--border); color: var(--muted); }
+    .status-opt.current     { box-shadow: 0 0 0 2px var(--gold); }
+
+    /* ── TOAST ── */
+    .rm-toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--card); border: 1px solid var(--border); color: var(--white); padding: .6rem 1.3rem; border-radius: 6px; font-size: .8rem; z-index: 999; transition: opacity .3s; }
+    .rm-toast.hidden { opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body>
+
+  <header class="adm-header">
+    <a href="../index.html" class="adm-logo">Mường Thanh</a>
+    <nav class="adm-nav">
+      <a href="dashboard.html"  class="adm-nav-link">Dashboard</a>
+      <a href="index.html"      class="adm-nav-link">Đặt Phòng</a>
+      <a href="customers.html"  class="adm-nav-link">Khách Hàng</a>
+      <a href="hotels.html"     class="adm-nav-link">Khách Sạn</a>
+      <a href="rooms.html"      class="adm-nav-link active">Phòng</a>
+      <a href="staff.html"      class="adm-nav-link">Nhân Viên</a>
+      <a href="reviews.html"    class="adm-nav-link">Đánh Giá</a>
+      <a href="promotions.html" class="adm-nav-link">Khuyến Mãi</a>
+      <a href="payments.html"   class="adm-nav-link">Thanh Toán</a>
+      <a href="emails.html"     class="adm-nav-link">Email</a>
+      <a href="settings.html"   class="adm-nav-link">Cài Đặt</a>
+          <a href="chat.html" class="adm-nav-link">Live Chat</a>
+    </nav>
+    <button class="btn-add-manual" id="btnAddRoom" data-adm-i18n="rm.btn_add">+ Thêm phòng</button>
+  </header>
+
+  <!-- FILTER BAR (uses admin.css .filter-bar) -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label data-adm-i18n="rm.label_hotel">Khách sạn</label>
+      <select id="fHotel">
+        <option value="" data-adm-i18n="rm.all_hotels">-- Tất cả khách sạn --</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label data-adm-i18n="dash.th_status">Trạng thái</label>
+      <select id="fStatus">
+        <option value="" data-adm-i18n="rm.all_status">-- Tất cả --</option>
+        <option value="available"   data-adm-i18n="rm.status_available">Trống</option>
+        <option value="occupied"    data-adm-i18n="rm.status_occupied">Có khách</option>
+        <option value="maintenance" data-adm-i18n="rm.status_maintenance">Bảo trì</option>
+        <option value="blocked"     data-adm-i18n="rm.status_blocked">Tạm khóa</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label data-adm-i18n="rm.floor">Tầng</label>
+      <input type="number" id="fFloor" placeholder="—" min="0" style="min-width:80px;max-width:80px"/>
+    </div>
+    <div class="filter-group search-group">
+      <label data-adm-i18n="rm.search_ph">Tìm phòng</label>
+      <input type="text" id="fSearch" placeholder="Số phòng, loại phòng..."/>
+    </div>
+    <button class="btn-reset" id="btnReset" data-adm-i18n="rm.btn_reset">Đặt lại</button>
+  </div>
+
+  <!-- STATS (uses admin.css .stats-row + .stat-card) -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-val" id="stTotal">—</span>
+      <span class="stat-lbl" data-adm-i18n="rm.stat_total">Tổng phòng</span>
+    </div>
+    <div class="stat-card green">
+      <span class="stat-val" id="stAvail">—</span>
+      <span class="stat-lbl" data-adm-i18n="rm.status_available">Trống</span>
+    </div>
+    <div class="stat-card red">
+      <span class="stat-val" id="stOcc">—</span>
+      <span class="stat-lbl" data-adm-i18n="rm.status_occupied">Có khách</span>
+    </div>
+    <div class="stat-card amber">
+      <span class="stat-val" id="stMaint">—</span>
+      <span class="stat-lbl" data-adm-i18n="rm.status_maintenance">Bảo trì</span>
+    </div>
+    <div class="stat-card gray">
+      <span class="stat-val" id="stBlock">—</span>
+      <span class="stat-lbl" data-adm-i18n="rm.status_blocked">Tạm khóa</span>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="rm-toolbar" id="rmResults"></div>
+
+  <!-- GRID -->
+  <div class="rooms-grid" id="roomsGrid">
+    <div class="rooms-empty" data-adm-i18n="common.loading">Đang tải...</div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT ROOM -->
+  <div class="modal-overlay hidden" id="modalRoom">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalRoomTitle" data-adm-i18n="rm.modal_add">Thêm Phòng Mới</h2>
+        <button class="modal-close" id="modalRoomClose">✕</button>
+      </div>
+      <form class="modal-form" id="roomForm">
+        <input type="hidden" id="editRoomId"/>
+        <div class="mfield">
+          <label data-adm-i18n="rm.label_hotel">Khách sạn <span style="color:var(--red)">*</span></label>
+          <select id="fmHotel" required></select>
+        </div>
+        <div class="mform-row">
+          <div class="mfield">
+            <label data-adm-i18n="rm.label_number">Số phòng <span style="color:var(--red)">*</span></label>
+            <input type="text" id="fmNumber" placeholder="101" required/>
+          </div>
+          <div class="mfield">
+            <label data-adm-i18n="rm.floor">Tầng</label>
+            <input type="number" id="fmFloor" placeholder="1" min="1"/>
+          </div>
+        </div>
+        <div class="mfield">
+          <label data-adm-i18n="rm.label_type">Loại phòng <span style="color:var(--red)">*</span></label>
+          <select id="fmType" required></select>
+        </div>
+        <div class="mform-row">
+          <div class="mfield">
+            <label data-adm-i18n="dash.th_status">Trạng thái</label>
+            <select id="fmStatus">
+              <option value="available"   data-adm-i18n="rm.status_available">Trống</option>
+              <option value="occupied"    data-adm-i18n="rm.status_occupied">Có khách</option>
+              <option value="maintenance" data-adm-i18n="rm.status_maintenance">Bảo trì</option>
+              <option value="blocked"     data-adm-i18n="rm.status_blocked">Tạm khóa</option>
+            </select>
+          </div>
+          <div class="mfield">
+            <label data-adm-i18n="rm.label_ref">Mã đặt phòng</label>
+            <input type="text" id="fmRef" placeholder="MT-XXXXXXXX"/>
+          </div>
+        </div>
+        <div class="mfield">
+          <label data-adm-i18n="rm.label_notes">Ghi chú</label>
+          <textarea id="fmNotes" rows="2"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="roomFormCancel" data-adm-i18n="rm.btn_cancel">Hủy</button>
+          <button type="submit" class="btn-save" data-adm-i18n="rm.btn_save">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CHANGE STATUS -->
+  <div class="modal-overlay hidden" id="modalStatus">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="statusModalTitle" data-adm-i18n="rm.change_status">Đổi Trạng Thái Phòng</h2>
+        <button class="modal-close" id="modalStatusClose">✕</button>
+      </div>
+      <input type="hidden" id="statusRoomId"/>
+      <div class="status-grid">
+        <div class="status-opt available"   onclick="applyStatus('available')"   data-adm-i18n="rm.status_available">Trống</div>
+        <div class="status-opt occupied"    onclick="applyStatus('occupied')"    data-adm-i18n="rm.status_occupied">Có khách</div>
+        <div class="status-opt maintenance" onclick="applyStatus('maintenance')" data-adm-i18n="rm.status_maintenance">Bảo trì</div>
+        <div class="status-opt blocked"     onclick="applyStatus('blocked')"     data-adm-i18n="rm.status_blocked">Tạm khóa</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rm-toast hidden" id="rmToast"></div>
+
+  <script src="../data/hotels.js"></script>
+  <script src="rooms.js"></script>
+  <script src="admin-auth.js"></script>
+</body>
+</html>

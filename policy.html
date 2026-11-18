@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chính Sách Quyền Riêng Tư — Mường Thanh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="i18n.js"></script>
+  <style>
+    .nav-auth { display:flex; align-items:center; margin-left:0.8rem; }
+    .nav-login-btn { font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(201,169,110,0.4); padding:0.45rem 1.1rem; transition:all 0.3s; }
+    .nav-login-btn:hover { background:rgba(201,169,110,0.08); }
+    .nav-user-btn { font-size:0.72rem; letter-spacing:0.1em; color:var(--white); display:flex; align-items:center; gap:0.5rem; padding:0.4rem 0.8rem; border:1px solid transparent; transition:all 0.3s; }
+    .nav-user-btn:hover { border-color:var(--border); }
+    .nav-user-avatar { width:28px; height:28px; border-radius:50%; background:rgba(201,169,110,0.15); border:1px solid rgba(201,169,110,0.4); display:flex; align-items:center; justify-content:center; font-family:var(--font-serif); font-size:0.85rem; color:var(--gold); }
+
+    .page-hero {
+      padding: 10rem 6vw 4rem;
+      border-bottom: 1px solid rgba(201,169,110,0.12);
+    }
+    .page-breadcrumb { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(245,240,234,0.35); margin-bottom: 1.5rem; display: flex; gap: 0.6rem; }
+    .page-breadcrumb a { color: inherit; text-decoration: none; }
+    .page-breadcrumb a:hover { color: var(--gold); }
+    .page-hero-label { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
+    .page-hero-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 300; color: var(--white); line-height: 1.1; }
+    .page-hero-title em { font-style: italic; color: var(--gold); }
+    .page-updated { font-size: 0.7rem; color: rgba(245,240,234,0.3); margin-top: 1rem; }
+
+    .doc-body {
+      max-width: 820px; margin: 0 auto;
+      padding: 4rem 6vw 6rem;
+    }
+
+    .doc-section { margin-bottom: 3.5rem; }
+    .doc-section-num {
+      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.8rem;
+    }
+    .doc-section h2 {
+      font-family: var(--font-serif); font-size: 1.4rem; font-weight: 300;
+      color: var(--white); margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(201,169,110,0.12);
+    }
+    .doc-section h3 {
+      font-size: 0.82rem; font-weight: 600; color: rgba(245,240,234,0.8);
+      margin: 1.5rem 0 0.6rem; letter-spacing: 0.04em;
+    }
+    .doc-section p {
+      font-size: 0.85rem; line-height: 1.85; color: rgba(245,240,234,0.55);
+      margin-bottom: 1rem;
+    }
+    .doc-section ul {
+      padding-left: 1.2rem; margin-bottom: 1rem;
+    }
+    .doc-section ul li {
+      font-size: 0.84rem; line-height: 1.8; color: rgba(245,240,234,0.5);
+      margin-bottom: 0.4rem;
+      list-style: none; position: relative; padding-left: 0.8rem;
+    }
+    .doc-section ul li::before {
+      content: '—'; position: absolute; left: -0.8rem;
+      color: rgba(201,169,110,0.4);
+    }
+
+    .doc-contact-box {
+      background: rgba(201,169,110,0.05);
+      border: 1px solid rgba(201,169,110,0.15);
+      padding: 1.5rem 2rem; margin-top: 1.5rem;
+      font-size: 0.82rem; color: rgba(245,240,234,0.55); line-height: 1.8;
+    }
+    .doc-contact-box a { color: var(--gold); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <nav class="nav scrolled">
+    <a href="index.html" class="nav-logo">Mường Thanh</a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">← Trang chủ</a>
+      <a href="search.html" class="nav-link">Tìm khách sạn</a>
+    </div>
+    <a href="search.html" class="btn-book">Đặt Phòng</a>
+    <div class="nav-auth" id="navAuth">
+      <a href="login.html" class="nav-login-btn">Đăng nhập</a>
+    </div>
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="vi" onclick="setLang('vi')">VI</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-breadcrumb">
+      <a href="index.html">Trang chủ</a>
+      <span>/</span>
+      <span>Chính sách quyền riêng tư</span>
+    </div>
+    <p class="page-hero-label">PHÁP LÝ & BẢO MẬT</p>
+    <h1 class="page-hero-title">Chính Sách<br/><em>Quyền Riêng Tư</em></h1>
+    <p class="page-updated">Cập nhật lần cuối: 2022</p>
+  </div>
+
+  <div class="doc-body">
+
+    <div class="doc-section">
+      <p>Chính sách quyền riêng tư này mô tả cách thức Mường Thanh thu thập và sử dụng thông tin cá nhân của Khách hàng trong quá trình sử dụng và vận hành các trang web, sản phẩm và dịch vụ của Mường Thanh.</p>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-section-num">I</div>
+      <h2>Thu Thập Thông Tin</h2>
+
+      <h3>1. Mục đích thu thập thông tin cá nhân</h3>
+      <p>Mường Thanh thu thập thông tin từ Khách hàng trực tiếp cung cấp và từ bên thứ ba, nhà cung cấp dịch vụ, đối tác với các mục đích sau:</p>
+      <ul>
+        <li>Xác định Khách hàng khi đăng nhập và sử dụng dịch vụ</li>
+        <li>Đề xuất cá nhân hóa và cung cấp nội dung tùy chỉnh</li>
+        <li>Nghiên cứu và phân tích để cải thiện chất lượng dịch vụ</li>
+        <li>Nội dung và quảng cáo liên quan dựa trên sở thích</li>
+        <li>Đo lường và phân tích chất lượng dịch vụ</li>
+      </ul>
+
+      <h3>Cookie</h3>
+      <p>Cookie cho phép Khách hàng tận dụng một số tính năng cần thiết. Cookie bên thứ ba được đặt bởi công cụ tìm kiếm, nhà cung cấp phân tích, mạng xã hội nhằm cung cấp nội dung dựa trên sở thích và đo lường hiệu quả dịch vụ. Người dùng có thể cấu hình trình duyệt để quản lý cookie.</p>
+
+      <h3>2. Bảo vệ thông tin</h3>
+      <p>Mường Thanh cam kết:</p>
+      <ul>
+        <li>Chỉ thu thập thông tin cần thiết và liên quan</li>
+        <li>Lưu trữ và sử dụng có hệ thống, chính xác, cập nhật</li>
+        <li>Không tiết lộ cho bên thứ ba nếu không có sự đồng ý của khách hàng hoặc yêu cầu pháp lý</li>
+        <li>Hệ thống bảo mật nghiêm ngặt chống truy cập trái phép</li>
+        <li>Hạn chế quyền truy cập của nhân viên theo chính sách bảo mật công ty</li>
+      </ul>
+
+      <h3>3. Thời gian lưu trữ thông tin</h3>
+      <p>Chúng tôi lưu trữ thông tin cá nhân để đảm bảo khả năng sử dụng liên tục các dịch vụ. Thời gian lưu trữ phụ thuộc vào mục đích và yêu cầu pháp lý; việc xóa dữ liệu tuân theo pháp luật hiện hành.</p>
+
+      <h3>4. Quyền truy cập thông tin</h3>
+      <p>Quản trị viên website Tập đoàn Mường Thanh duy trì quản lý thông tin cá nhân nghiêm ngặt với các biện pháp ngăn chặn sử dụng, tiết lộ hoặc sửa đổi trái phép.</p>
+
+      <h3>5. Thông tin liên hệ về quản lý dữ liệu</h3>
+      <div class="doc-contact-box">
+        Mọi thắc mắc về chính sách quyền riêng tư, vui lòng liên hệ:<br/>
+        Email: <a href="mailto:info@muongthanh.vn">info@muongthanh.vn</a><br/>
+        Hotline: <a href="tel:19001833">1900 1833</a>
+      </div>
+
+      <h3>6. Phương thức truy cập và chỉnh sửa dữ liệu</h3>
+      <p>Khách hàng có thể xem, cập nhật và xóa thông tin tài khoản thông qua trang <a href="profile.html" style="color:var(--gold);text-decoration:none">Tài khoản của tôi</a> hoặc liên hệ bộ phận hỗ trợ qua hotline 1900 1833.</p>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-section-num">II</div>
+      <h2>Khuyến Nghị Bảo Mật</h2>
+      <p>Để bảo vệ tài khoản của mình, Khách hàng nên:</p>
+      <ul>
+        <li>Không tiết lộ tên đăng nhập và mật khẩu cho bất kỳ ai</li>
+        <li>Tránh đặt mật khẩu bằng tên, ngày sinh hoặc thông tin dễ đoán</li>
+        <li>Đăng xuất khi rời khỏi thiết bị dùng chung</li>
+        <li>Thay đổi mật khẩu ngay khi nghi ngờ bị lộ thông tin</li>
+        <li>Báo cáo ngay cho Mường Thanh nếu phát hiện giao dịch trái phép</li>
+      </ul>
+
+      <h3>Cập nhật chính sách</h3>
+      <p>Chính sách quyền riêng tư có thể được sửa đổi theo thời gian. Người dùng nên thường xuyên kiểm tra cập nhật. Các sửa đổi sẽ không làm giảm mức độ bảo vệ dữ liệu đã thu thập trước đó mà không có thông báo rõ ràng.</p>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-section-num">THÔNG TIN DOANH NGHIỆP</div>
+      <h2>Thông Tin Pháp Lý</h2>
+      <p style="font-size:0.8rem;color:rgba(245,240,234,0.4)">
+        Công ty Cổ phần Tập đoàn Mường Thanh<br/>
+        Số ĐKKD: 0106011932 · Đăng ký lần đầu: 15/10/2012<br/>
+        Nơi cấp: Sở Kế hoạch và Đầu tư Tỉnh Điện Biên<br/>
+        Trụ sở: Số nhà 25, Tổ dân phố 21, Phường Him Lam, TP Điện Biên Phủ, Tỉnh Điện Biên<br/>
+        Email: <a href="mailto:info@muongthanh.vn" style="color:var(--gold);text-decoration:none">info@muongthanh.vn</a>
+      </p>
+    </div>
+
+  </div>
+
+  <script src="cursor.js"></script>
+  <script>
+    fetch('api/auth.php?action=me').then(r=>r.json()).then(d=>{
+      if (!d.authenticated) return;
+      const c = d.customer;
+      const initial = ((c.last_name||'')[0]||(c.first_name||'')[0]||'?').toUpperCase();
+      const name = [c.last_name, c.first_name].filter(Boolean).join(' ');
+      document.getElementById('navAuth').innerHTML =
+        `<a href="profile.html" class="nav-user-btn"><span class="nav-user-avatar">${initial}</span><span>${name}</span></a>`;
+    }).catch(()=>{});
+  </script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mường Thanh — Chuỗi Khách Sạn Tư Nhân Lớn Nhất Đông Dương</title>
+  <meta name="description" content="Đặt phòng khách sạn Mường Thanh — Hơn 63 khách sạn sang trọng trải dài Việt Nam và Đông Dương. Trải nghiệm xa xỉ, dịch vụ đẳng cấp." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+  <script src="i18n.js"></script>
+  <style>
+    .nav-auth { display:flex; align-items:center; margin-left:0.8rem; }
+    .nav-login-btn {
+      font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
+      color:var(--gold); border:1px solid rgba(201,169,110,0.4);
+      padding:0.45rem 1.1rem; transition:all 0.3s; white-space:nowrap;
+    }
+    .nav-login-btn:hover { background:rgba(201,169,110,0.08); border-color:var(--gold); }
+    .nav-user-btn {
+      font-size:0.72rem; letter-spacing:0.1em; color:var(--white);
+      display:flex; align-items:center; gap:0.5rem; cursor:pointer;
+      padding:0.4rem 0.8rem; border:1px solid transparent; transition:all 0.3s;
+    }
+    .nav-user-btn:hover { border-color:var(--border); }
+    .nav-user-avatar {
+      width:28px; height:28px; border-radius:50%; background:rgba(201,169,110,0.15);
+      border:1px solid rgba(201,169,110,0.4); display:flex; align-items:center;
+      justify-content:center; font-family:var(--font-serif); font-size:0.85rem; color:var(--gold);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- LOADER -->
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">
+        <span>M</span><span>Ư</span><span>Ờ</span><span>N</span><span>G</span>
+        <br/>
+        <span>T</span><span>H</span><span>A</span><span>N</span><span>H</span>
+      </div>
+      <div class="loader-bar"><div class="loader-progress" id="loaderProgress"></div></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo">Mường Thanh</a>
+    <div class="nav-links">
+      <a href="#destinations" class="nav-link" data-i18n="nav.destinations">Điểm đến</a>
+      <a href="#brands" class="nav-link" data-i18n="nav.brands">Thương hiệu</a>
+      <a href="#rooms" class="nav-link" data-i18n="nav.rooms">Phòng</a>
+      <a href="#offers" class="nav-link" data-i18n="nav.offers">Ưu đãi</a>
+    </div>
+    <a href="search.html" class="btn-book" data-i18n="nav.book">Đặt Phòng</a>
+    <div class="nav-auth" id="navAuth">
+      <a href="login.html" class="nav-login-btn" id="navLoginBtn" data-i18n="nav.login">Đăng nhập</a>
+    </div>
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="vi" onclick="setLang('vi')">VI</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="nav-burger" id="navBurger" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#destinations" class="mobile-link">Điểm đến</a>
+    <a href="#brands" class="mobile-link">Thương hiệu</a>
+    <a href="#rooms" class="mobile-link">Phòng</a>
+    <a href="#offers" class="mobile-link">Ưu đãi</a>
+    <a href="search.html" class="mobile-link highlight">Đặt Phòng</a>
+    <a href="login.html" class="mobile-link" id="mobileAuthLink">Đăng nhập</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img src="img/hero.png" alt="Mường Thanh Lobby" class="hero-img" id="heroImg"/>
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-label reveal-up" data-i18n="hero.label">KHÁCH SẠN TƯ NHÂN LỚN NHẤT ĐÔNG DƯƠNG</p>
+      <h1 class="hero-title">
+        <span class="title-line reveal-up" data-delay="0.1" data-i18n="hero.line1">Nghỉ Dưỡng</span>
+        <span class="title-line reveal-up italic" data-delay="0.2" data-i18n="hero.line2">Đẳng Cấp</span>
+        <span class="title-line reveal-up" data-delay="0.3" data-i18n="hero.line3">Việt Nam</span>
+      </h1>
+      <p class="hero-sub reveal-up" data-delay="0.4" data-i18n="hero.sub">Hơn 63 khách sạn trải dài khắp Việt Nam và Lào — nơi mỗi hành trình bắt đầu từ sự sang trọng.</p>
+      <div class="hero-cta reveal-up" data-delay="0.5">
+        <a href="search.html" class="btn-primary" data-i18n="hero.cta1">Khám Phá Ngay</a>
+        <a href="#destinations" class="btn-ghost" data-i18n="hero.cta2">Xem Điểm Đến</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>SCROLL</span>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num" data-target="63">0</span>
+        <span class="stat-label" data-i18n="hero.stat1">Khách sạn</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num" data-target="30">0</span>
+        <span class="stat-label" data-i18n="hero.stat2">Tỉnh thành</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num" data-target="25">0</span>
+        <span class="stat-label" data-i18n="hero.stat3">Năm kinh nghiệm</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING BAR -->
+  <section class="booking-bar" id="booking">
+    <div class="booking-container">
+      <h2 class="booking-title" data-i18n="bar.title">Đặt Phòng</h2>
+      <form class="booking-form" id="bookingForm">
+        <div class="form-group">
+          <label data-i18n="bar.dest">Điểm đến</label>
+          <select id="bookingDest">
+            <option value="">Chọn điểm đến</option>
+            <option>Hạ Long, Quảng Ninh</option>
+            <option>Đà Nẵng</option>
+            <option>Sa Pa, Lào Cai</option>
+            <option>Nha Trang, Khánh Hòa</option>
+            <option>Hà Nội</option>
+            <option>Hồ Chí Minh</option>
+            <option>Đà Lạt, Lâm Đồng</option>
+            <option>Điện Biên Phủ</option>
+            <option>Phú Quốc</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-i18n="bar.checkin">Nhận phòng</label>
+          <input type="date" id="checkIn"/>
+        </div>
+        <div class="form-group">
+          <label data-i18n="bar.checkout">Trả phòng</label>
+          <input type="date" id="checkOut"/>
+        </div>
+        <div class="form-group">
+          <label data-i18n="bar.guests">Khách</label>
+          <select id="guests">
+            <option>1 Khách</option>
+            <option>2 Khách</option>
+            <option>3 Khách</option>
+            <option>4+ Khách</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-search" data-i18n="bar.search">Tìm Phòng</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>LUXURY</span><span>·</span>
+      <span>GRAND</span><span>·</span>
+      <span>HOLIDAY</span><span>·</span>
+      <span>MƯỜNG THANH</span><span>·</span>
+      <span>LUXURY</span><span>·</span>
+      <span>GRAND</span><span>·</span>
+      <span>HOLIDAY</span><span>·</span>
+      <span>MƯỜNG THANH</span><span>·</span>
+      <span>LUXURY</span><span>·</span>
+      <span>GRAND</span><span>·</span>
+      <span>HOLIDAY</span><span>·</span>
+      <span>MƯỜNG THANH</span><span>·</span>
+    </div>
+  </div>
+
+  <!-- DESTINATIONS -->
+  <section class="destinations" id="destinations">
+    <div class="section-header">
+      <p class="section-label reveal-up" data-i18n="dest.label">ĐIỂM ĐẾN NỔI BẬT</p>
+      <h2 class="section-title reveal-up"><span data-i18n="dest.title1">Khám Phá</span><br/><em data-i18n="dest.title2">Việt Nam</em></h2>
+    </div>
+    <div class="dest-grid">
+      <div class="dest-card large" data-index="0" onclick="location.href='search.html?dest=Hạ Long'" style="cursor:pointer">
+        <div class="dest-img-wrap">
+          <img src="img/halong.png" alt="Hạ Long Bay" class="dest-img"/>
+        </div>
+        <div class="dest-info">
+          <span class="dest-tag">QUẢNG NINH</span>
+          <h3>Hạ Long</h3>
+          <p><span>6</span> <span data-i18n="dest.hotels_unit">Khách sạn</span></p>
+          <a href="search.html?dest=Hạ Long" class="dest-btn" onclick="event.stopPropagation()" data-i18n="dest.explore">Khám phá →</a>
+        </div>
+      </div>
+      <div class="dest-card" data-index="1" onclick="location.href='search.html?dest=Đà Nẵng'" style="cursor:pointer">
+        <div class="dest-img-wrap">
+          <img src="img/danang.png" alt="Đà Nẵng" class="dest-img"/>
+        </div>
+        <div class="dest-info">
+          <span class="dest-tag">MIỀN TRUNG</span>
+          <h3>Đà Nẵng</h3>
+          <p><span>5</span> <span data-i18n="dest.hotels_unit">Khách sạn</span></p>
+          <a href="search.html?dest=Đà Nẵng" class="dest-btn" onclick="event.stopPropagation()" data-i18n="dest.explore">Khám phá →</a>
+        </div>
+      </div>
+      <div class="dest-card" data-index="2" onclick="location.href='search.html?dest=Sa Pa'" style="cursor:pointer">
+        <div class="dest-img-wrap">
+          <img src="img/sapa.png" alt="Sa Pa" class="dest-img"/>
+        </div>
+        <div class="dest-info">
+          <span class="dest-tag">LÀO CAI</span>
+          <h3>Sa Pa</h3>
+          <p><span>2</span> <span data-i18n="dest.hotels_unit">Khách sạn</span></p>
+          <a href="search.html?dest=Sa Pa" class="dest-btn" onclick="event.stopPropagation()" data-i18n="dest.explore">Khám phá →</a>
+        </div>
+      </div>
+      <div class="dest-card" data-index="3" onclick="location.href='search.html?dest=Nha Trang'" style="cursor:pointer">
+        <div class="dest-img-wrap">
+          <img src="img/room.png" alt="Nha Trang" class="dest-img"/>
+        </div>
+        <div class="dest-info">
+          <span class="dest-tag">KHÁNH HÒA</span>
+          <h3>Nha Trang</h3>
+          <p><span>4</span> <span data-i18n="dest.hotels_unit">Khách sạn</span></p>
+          <a href="search.html?dest=Nha Trang" class="dest-btn" onclick="event.stopPropagation()" data-i18n="dest.explore">Khám phá →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRANDS -->
+  <section class="brands" id="brands">
+    <div class="brands-inner">
+      <div class="section-header">
+        <p class="section-label reveal-up" data-i18n="brands.label">HỆ THỐNG THƯƠNG HIỆU</p>
+        <h2 class="section-title reveal-up"><span data-i18n="brands.title1">Bốn Đẳng Cấp</span><br/><em data-i18n="brands.title2">Một Trải Nghiệm</em></h2>
+      </div>
+      <div class="brands-grid">
+        <div class="brand-card reveal-up" data-delay="0" onclick="location.href='brand.html?brand=luxury'" style="cursor:pointer">
+          <div class="brand-icon">✦</div>
+          <h3>Luxury</h3>
+          <p data-i18n="brand.luxury.desc">Tiêu chuẩn 5 sao quốc tế, vị trí đắc địa, dịch vụ cá nhân hóa tuyệt đỉnh.</p>
+          <span class="brand-count">25 <span data-i18n="dest.hotels_unit">Khách sạn</span></span>
+          <span class="brand-link" data-i18n="brands.learn_more">Tìm hiểu thêm →</span>
+        </div>
+        <div class="brand-card reveal-up" data-delay="0.1" onclick="location.href='brand.html?brand=grand'" style="cursor:pointer">
+          <div class="brand-icon">◆</div>
+          <h3>Grand</h3>
+          <p data-i18n="brand.grand.desc">Không gian rộng lớn, sang trọng, phù hợp cho cả doanh nhân và gia đình.</p>
+          <span class="brand-count">20 <span data-i18n="dest.hotels_unit">Khách sạn</span></span>
+          <span class="brand-link" data-i18n="brands.learn_more">Tìm hiểu thêm →</span>
+        </div>
+        <div class="brand-card reveal-up" data-delay="0.2" onclick="location.href='brand.html?brand=holiday'" style="cursor:pointer">
+          <div class="brand-icon">◈</div>
+          <h3>Holiday</h3>
+          <p data-i18n="brand.holiday.desc">Điểm nghỉ dưỡng lý tưởng cho kỳ nghỉ gia đình tại các bãi biển đẹp nhất.</p>
+          <span class="brand-count">12 <span data-i18n="dest.hotels_unit">Khách sạn</span></span>
+          <span class="brand-link" data-i18n="brands.learn_more">Tìm hiểu thêm →</span>
+        </div>
+        <div class="brand-card reveal-up" data-delay="0.3" onclick="location.href='brand.html?brand=muongthanh'" style="cursor:pointer">
+          <div class="brand-icon">❋</div>
+          <h3>Mường Thanh</h3>
+          <p data-i18n="brand.mt.desc">Bản sắc văn hóa Việt, ấm áp và thân thiện như chính ngôi nhà của bạn.</p>
+          <span class="brand-count">7 <span data-i18n="dest.hotels_unit">Khách sạn</span></span>
+          <span class="brand-link" data-i18n="brands.learn_more">Tìm hiểu thêm →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM SHOWCASE -->
+  <section class="rooms" id="rooms">
+    <div class="rooms-inner">
+      <div class="rooms-text">
+        <p class="section-label reveal-up" data-i18n="rooms.label">PHÒNG & SUITE</p>
+        <h2 class="section-title reveal-up"><span data-i18n="rooms.title1">Không Gian</span><br/><em data-i18n="rooms.title2">Hoàn Hảo</em></h2>
+        <p class="rooms-desc reveal-up" data-i18n="rooms.desc">Mỗi căn phòng là một tuyệt tác thiết kế — nơi tiện nghi hiện đại hòa quyện cùng hơi thở văn hóa Việt Nam, mang đến giấc ngủ ngon và kỳ nghỉ đáng nhớ.</p>
+        <div class="rooms-features">
+          <div class="feature reveal-up"><span>✓</span> <span data-i18n="rooms.feat1">Nội thất cao cấp nhập khẩu</span></div>
+          <div class="feature reveal-up"><span>✓</span> <span data-i18n="rooms.feat2">Tầm nhìn panorama tuyệt đẹp</span></div>
+          <div class="feature reveal-up"><span>✓</span> <span data-i18n="rooms.feat3">Dịch vụ 24/7 tận tâm</span></div>
+          <div class="feature reveal-up"><span>✓</span> <span data-i18n="rooms.feat4">Minibar & Spa cao cấp</span></div>
+        </div>
+        <a href="#booking" class="btn-primary reveal-up" data-i18n="rooms.cta">Xem Tất Cả Phòng</a>
+      </div>
+      <div class="rooms-visual">
+        <div class="room-img-wrap">
+          <img src="img/room.png" alt="Luxury Suite" class="room-img"/>
+          <div class="room-badge">
+            <span class="badge-num">Suite</span>
+            <span class="badge-text">Deluxe King</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFERS -->
+  <section class="offers" id="offers">
+    <div class="section-header">
+      <p class="section-label reveal-up" data-i18n="offers.label">ƯU ĐÃI ĐẶC BIỆT</p>
+      <h2 class="section-title reveal-up"><span data-i18n="offers.title1">Khám Phá</span><br/><em data-i18n="offers.title2">Ưu Đãi</em></h2>
+    </div>
+    <div class="offers-grid">
+      <div class="offer-card reveal-up" data-delay="0">
+        <div class="offer-tag">HOT DEAL</div>
+        <h3 data-i18n="offer1.title">Mùa Hè Vàng</h3>
+        <p data-i18n="offer1.desc">Giảm đến <strong>40%</strong> cho kỳ nghỉ từ 3 đêm tại các khách sạn biển.</p>
+        <div class="offer-footer">
+          <span data-i18n="offer1.expiry">Đến 31/08/2025</span>
+          <a href="#booking" class="offer-btn" data-i18n="offer.book_now">Đặt ngay</a>
+        </div>
+      </div>
+      <div class="offer-card reveal-up" data-delay="0.1">
+        <div class="offer-tag">EARLY BIRD</div>
+        <h3 data-i18n="offer2.title">Đặt Sớm — Giá Tốt</h3>
+        <p data-i18n="offer2.desc">Đặt trước 30 ngày, tiết kiệm <strong>25%</strong> và nhận bữa sáng miễn phí.</p>
+        <div class="offer-footer">
+          <span data-i18n="offer2.expiry">Áp dụng quanh năm</span>
+          <a href="#booking" class="offer-btn" data-i18n="offer.book_now">Đặt ngay</a>
+        </div>
+      </div>
+      <div class="offer-card reveal-up" data-delay="0.2">
+        <div class="offer-tag">HOA BAN</div>
+        <h3 data-i18n="offer3.title">Thành Viên Hoa Ban</h3>
+        <p data-i18n="offer3.desc">Tích điểm, nâng hạng và nhận <strong>ưu đãi độc quyền</strong> dành riêng hội viên.</p>
+        <div class="offer-footer">
+          <span data-i18n="offer3.expiry">Đăng ký miễn phí</span>
+          <a href="#booking" class="offer-btn" data-i18n="offer3.btn">Tham gia</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="testimonials-inner">
+      <p class="section-label reveal-up" data-i18n="testi.label">CẢM NHẬN KHÁCH HÀNG</p>
+      <div class="testimonials-slider" id="testimonialSlider">
+        <div class="testimonial active">
+          <blockquote data-i18n="testi.q1">"Dịch vụ tuyệt vời, phòng rộng rãi và sạch sẽ. View Hạ Long từ ban công cực kỳ ấn tượng. Chắc chắn sẽ quay lại!"</blockquote>
+          <cite>— Nguyễn Minh Tuấn, Hà Nội</cite>
+        </div>
+        <div class="testimonial">
+          <blockquote data-i18n="testi.q2">"Mường Thanh Grand Đà Nẵng là lựa chọn hoàn hảo. Bãi biển ngay trước cửa, nhân viên nhiệt tình, giá cực hợp lý."</blockquote>
+          <cite>— Trần Thu Hương, TP.HCM</cite>
+        </div>
+        <div class="testimonial">
+          <blockquote data-i18n="testi.q3">"Kỳ nghỉ Sa Pa đáng nhớ nhất trong cuộc đời. Khung cảnh núi non hùng vĩ, phòng ấm áp, ẩm thực địa phương đặc sắc."</blockquote>
+          <cite>— Lê Quốc Bảo, Đà Nẵng</cite>
+        </div>
+      </div>
+      <div class="testimonial-dots">
+        <button class="dot active" data-index="0"></button>
+        <button class="dot" data-index="1"></button>
+        <button class="dot" data-index="2"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h2 class="footer-logo">Mường Thanh</h2>
+        <p data-i18n="footer.tagline">Chuỗi khách sạn tư nhân lớn nhất Đông Dương — Hơn 25 năm kiến tạo những trải nghiệm lưu trú đẳng cấp.</p>
+        <div class="footer-socials">
+          <a href="https://www.facebook.com/fan.muongthanh" aria-label="Facebook" target="_blank">FB</a>
+          <a href="https://www.instagram.com/muongthanh.hospitality/" aria-label="Instagram" target="_blank">IG</a>
+          <a href="https://www.youtube.com/channel/UC5o0Ixg2ppx0bv3oLWBCDLQ" aria-label="YouTube" target="_blank">YT</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4 data-i18n="footer.col_brands">Thương Hiệu</h4>
+          <a href="brand.html?brand=luxury">Luxury</a>
+          <a href="brand.html?brand=grand">Grand</a>
+          <a href="brand.html?brand=holiday">Holiday</a>
+          <a href="brand.html?brand=muongthanh">Mường Thanh</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.col_dest">Điểm Đến</h4>
+          <a href="search.html?dest=Hạ Long">Hạ Long</a>
+          <a href="search.html?dest=Đà Nẵng">Đà Nẵng</a>
+          <a href="search.html?dest=Sa Pa">Sa Pa</a>
+          <a href="search.html?dest=Nha Trang">Nha Trang</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.col_support">Hỗ Trợ</h4>
+          <a href="contact.html" data-i18n="footer.contact">Liên hệ</a>
+          <a href="policy.html" data-i18n="footer.policy">Chính sách</a>
+          <a href="terms.html" data-i18n="footer.terms">Điều khoản chung</a>
+          <a href="tel:19001833">1900 1833</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-i18n="footer.copyright">© 2026 Mường Thanh Hospitality. All rights reserved.</span>
+      <span data-i18n="footer.made_in">Thiết kế với ♥ tại Việt Nam</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="chat-widget.js?v=1778877761"></script>
+  <script>
+    // Auth nav check
+    fetch('api/auth.php?action=me').then(r=>r.json()).then(d=>{
+      if (!d.authenticated) return;
+      const c = d.customer;
+      const initial = ((c.last_name||'')[0]||(c.first_name||'')[0]||'?').toUpperCase();
+      const name = [c.last_name, c.first_name].filter(Boolean).join(' ');
+      document.getElementById('navAuth').innerHTML =
+        `<a href="profile.html" class="nav-user-btn">
+          <span class="nav-user-avatar">${initial}</span>
+          <span>${name}</span>
+         </a>`;
+      const ml = document.getElementById('mobileAuthLink');
+      if (ml) { ml.href='profile.html'; ml.textContent='Tài khoản của tôi'; }
+    }).catch(()=>{});
+  </script>
+</body>
+</html>

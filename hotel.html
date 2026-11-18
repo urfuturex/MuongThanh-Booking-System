@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="pageTitle">Chi Tiết Khách Sạn — Mường Thanh</title>
+  <meta name="description" content="Xem chi tiết và đặt phòng khách sạn Mường Thanh"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="hotel.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="i18n.js"></script>
+</head>
+<body class="hotel-page">
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <nav class="nav scrolled">
+    <a href="index.html" class="nav-logo">Mường Thanh</a>
+    <div class="nav-links">
+      <a href="search.html" class="nav-link">← Quay lại tìm kiếm</a>
+    </div>
+    <a href="#roomSection" class="btn-book" data-i18n="hotel.book_btn">Đặt Phòng</a>
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="vi" onclick="setLang('vi')">VI</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+  </nav>
+
+  <!-- GALLERY HERO -->
+  <div class="gallery-hero" id="galleryHero">
+    <div class="gallery-main" id="galleryMain">
+      <img id="heroGalleryImg" src="" alt=""/>
+      <div class="gallery-overlay"></div>
+    </div>
+    <div class="gallery-thumbs" id="galleryThumbs"></div>
+  </div>
+
+  <!-- HOTEL HEADER -->
+  <div class="hotel-header-bar">
+    <div class="hotel-header-inner">
+      <div class="hotel-header-info">
+        <span class="hotel-brand-pill" id="hBrand"></span>
+        <h1 class="hotel-title" id="hName">...</h1>
+        <div class="hotel-meta">
+          <span class="hotel-stars-row" id="hStars"></span>
+          <span class="hotel-city" id="hCity"></span>
+        </div>
+      </div>
+      <div class="hotel-header-price">
+        <span class="price-label">Từ</span>
+        <span class="price-big" id="hPrice"></span>
+        <span class="price-night">/đêm</span>
+        <a href="#roomSection" class="btn-primary" style="margin-top:0.8rem;display:block;text-align:center">Chọn Phòng</a>
+      </div>
+    </div>
+    <!-- STICKY TABS -->
+    <nav class="hotel-tabs">
+      <a href="#overview" class="htab active" data-i18n="tab.overview">Tổng quan</a>
+      <a href="#roomSection" class="htab" data-i18n="tab.rooms">Phòng & Giá</a>
+      <a href="#amenitySection" class="htab" data-i18n="tab.amenities">Tiện nghi</a>
+      <a href="#mapSection" class="htab" data-i18n="tab.location">Vị trí</a>
+      <a href="#reviewSection" class="htab" data-i18n="tab.reviews">Đánh Giá</a>
+    </nav>
+  </div>
+
+  <div class="hotel-body">
+
+    <!-- OVERVIEW -->
+    <section class="hotel-section" id="overview">
+      <div class="hotel-section-inner">
+        <div class="overview-text">
+          <p class="section-label" data-i18n="hotel.intro_lbl">GIỚI THIỆU</p>
+          <h2 class="section-title"><span data-i18n="hotel.intro_t1">Trải Nghiệm</span><br/><em data-i18n="hotel.intro_t2">Đặc Biệt</em></h2>
+          <p class="overview-desc" id="hDesc"></p>
+          <div class="overview-highlights">
+            <div class="highlight-item">
+              <span class="hl-num" id="hRating"></span>
+              <span class="hl-label" data-i18n="hotel.rating_lbl">Đánh giá</span>
+            </div>
+            <div class="highlight-item">
+              <span class="hl-num" id="hReviews"></span>
+              <span class="hl-label" data-i18n="hotel.reviews_lbl">Lượt đánh giá</span>
+            </div>
+            <div class="highlight-item">
+              <span class="hl-num" id="hStarNum"></span>
+              <span class="hl-label" data-i18n="hotel.stars_lbl">Hạng sao</span>
+            </div>
+          </div>
+        </div>
+        <div class="overview-img-side">
+          <img id="overviewImg" src="" alt=""/>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROOMS -->
+    <section class="hotel-section alt" id="roomSection">
+      <div class="hotel-section-inner">
+        <p class="section-label" data-i18n="hotel.rooms_lbl">PHÒNG & SUITE</p>
+        <h2 class="section-title"><span data-i18n="hotel.rooms_t1">Chọn Phòng</span><br/><em data-i18n="hotel.rooms_t2">Phù Hợp</em></h2>
+
+        <!-- BOOKING DATE SELECTOR -->
+        <div class="room-datepicker">
+          <div class="rdp-group">
+            <label data-i18n="hotel.checkin">Nhận phòng</label>
+            <input type="date" id="rdpCheckIn"/>
+          </div>
+          <div class="rdp-group">
+            <label data-i18n="hotel.checkout">Trả phòng</label>
+            <input type="date" id="rdpCheckOut"/>
+          </div>
+          <div class="rdp-group">
+            <label data-i18n="hotel.guests">Số khách</label>
+            <select id="rdpGuests">
+              <option value="1">1 Khách</option>
+              <option value="2" selected>2 Khách</option>
+              <option value="3">3 Khách</option>
+              <option value="4">4+ Khách</option>
+            </select>
+          </div>
+          <div class="rdp-nights"><span id="nightCount">1</span><span>đêm</span></div>
+        </div>
+
+        <div class="rooms-list" id="roomsList"></div>
+      </div>
+    </section>
+
+    <!-- AMENITIES -->
+    <section class="hotel-section" id="amenitySection">
+      <div class="hotel-section-inner">
+        <p class="section-label" data-i18n="hotel.amenity_lbl">TIỆN NGHI & DỊCH VỤ</p>
+        <h2 class="section-title"><span data-i18n="hotel.amenity_t1">Tất Cả</span> <em data-i18n="hotel.amenity_t2">Tiện Ích</em></h2>
+        <div class="amenity-grid" id="amenityGrid"></div>
+      </div>
+    </section>
+
+    <!-- MAP -->
+    <section class="hotel-section alt" id="mapSection">
+      <div class="hotel-section-inner">
+        <p class="section-label" data-i18n="hotel.map_lbl">VỊ TRÍ</p>
+        <h2 class="section-title"><span data-i18n="hotel.map_t1">Tìm Chúng</span> <em data-i18n="hotel.map_t2">Tôi</em></h2>
+        <div class="map-wrap">
+          <div id="mapFrame" style="width:100%;height:420px;"></div>
+        </div>
+        <div class="map-address" id="mapAddress"></div>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="hotel-section" id="reviewSection">
+      <div class="hotel-section-inner">
+        <p class="section-label" data-i18n="hotel.rv_lbl">ĐÁNH GIÁ</p>
+        <h2 class="section-title"><span data-i18n="hotel.rv_t1">Khách Hàng</span> <em data-i18n="hotel.rv_t2">Nói Gì</em></h2>
+        <div class="rv-summary" id="rvSummary"></div>
+        <div class="rv-list" id="rvList"></div>
+        <div class="rv-form-wrap" id="rvFormWrap"></div>
+      </div>
+    </section>
+
+    <!-- SIMILAR HOTELS -->
+    <section class="hotel-section" id="similarSection">
+      <div class="hotel-section-inner">
+        <p class="section-label" data-i18n="hotel.sim_lbl">KHÁCH SẠN TƯƠNG TỰ</p>
+        <h2 class="section-title"><span data-i18n="hotel.sim_t1">Cũng Có Thể</span> <em data-i18n="hotel.sim_t2">Thích</em></h2>
+        <div class="similar-grid" id="similarGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer-mini">
+    <span>© 2026 Mường Thanh Hospitality</span>
+    <a href="search.html">← Về trang tìm kiếm</a>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="data/hotels.js"></script>
+  <script src="hotel.js"></script>
+  <script src="cursor.js"></script>
+  <script src="chat-widget.js?v=1778877761"></script>
+</body>
+</html>

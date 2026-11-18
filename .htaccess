@@ -1,0 +1,30 @@
+# Mường Thanh — Apache config
+
+# Bật mod_rewrite
+Options -Indexes
+RewriteEngine On
+
+# Cho phép CORS từ cùng domain
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Methods "GET, POST, PUT, OPTIONS"
+  Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
+
+# Bảo vệ thư mục api/ — chỉ cho phép truy cập file .php
+<FilesMatch "^(?!.*\.php$)">
+  <If "%{REQUEST_URI} =~ m#^/booking\.mt/api/#">
+    Order Allow,Deny
+    Deny from all
+  </If>
+</FilesMatch>
+
+# Chặn truy cập thẳng vào thư mục db/
+<FilesMatch "\.(sql)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# Không show lỗi PHP ra màn hình (production)
+php_flag display_errors Off
+php_flag log_errors On
