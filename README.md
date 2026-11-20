@@ -214,17 +214,12 @@ flowchart LR
 
 ## Author
 
-Developed by **baongoc2005**
+Developed by **DoTienToan**
 
 ---
 
-## GitHub Pages Demo
+## GitHub Pages 
 
-The public demo is deployed as a static frontend. GitHub Pages does not execute the PHP/MySQL backend.
+https://urfuturex.github.io/MuongThanh-Booking-System/index.html
 
-1. Push this repository to GitHub.
-2. Open **Settings → Pages**.
-3. Under **Build and deployment**, select **GitHub Actions**.
-4. The included `.github/workflows/pages.yml` workflow deploys `main` automatically.
 
-The search and hotel detail pages use `data/hotels.js` as a demo fallback when the PHP API is unavailable.
